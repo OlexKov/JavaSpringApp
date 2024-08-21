@@ -3,6 +3,8 @@ package org.example.controllers;
 import org.example.entities.Invoice;
 import org.example.exceptions.InvoiceNotFoundException;
 import org.example.interfaces.IInvoiceService;
+import org.example.interfaces.ISorangeService;
+import org.example.models.InvoiceCreationModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,8 @@ public class InvoiceController {
 
     @Autowired
     private IInvoiceService service;
+    @Autowired
+    private ISorangeService storageService;
 
     @GetMapping("/")
     public String showHomePage() {
@@ -30,9 +34,16 @@ public class InvoiceController {
 
     @PostMapping("/save")
     public String saveInvoice(
-            @ModelAttribute Invoice invoice,
+            @ModelAttribute InvoiceCreationModel invoiceModel,
             Model model
     ) {
+        Invoice invoice = new Invoice(
+                invoiceModel.getId(),
+                invoiceModel.getName(),
+                invoiceModel.getLocation(),
+                invoiceModel.getAmount(),""
+        );
+        invoice.setFileName(storageService.saveFile(invoiceModel.getFile()));
         service.saveInvice(invoice);
         Long id = service.saveInvice(invoice).getId();
         String message = "Record with id : '"+id+"' is saved successfully !";
@@ -72,9 +83,20 @@ public class InvoiceController {
 
     @PostMapping("/update")
     public String updateInvoice(
-            @ModelAttribute Invoice invoice,
+            @ModelAttribute InvoiceCreationModel invoiceModel,
             RedirectAttributes attributes
     ) {
+        Invoice invoice = new Invoice(
+                invoiceModel.getId(),
+                invoiceModel.getName(),
+                invoiceModel.getLocation(),
+                invoiceModel.getAmount(),""
+        );
+        if(invoiceModel.getFile() != null){
+            String fileName = service.getInvoiceById(invoice.getId()).getFileName();
+            storageService.deleteFile(fileName);
+            invoice.setFileName(storageService.saveFile(invoiceModel.getFile()));
+        }
         service.updateInvoice(invoice);
         Long id = invoice.getId();
         attributes.addAttribute("message", "Invoice with id: '"+id+"' is updated successfully !");
@@ -87,7 +109,9 @@ public class InvoiceController {
             RedirectAttributes attributes
     ) {
         try {
+            String fileName = service.getInvoiceById(id).getFileName();
             service.deleteInvoiceById(id);
+            storageService.deleteFile(fileName);
             attributes.addAttribute("message", "Invoice with Id : '"+id+"' is removed successfully!");
         } catch (InvoiceNotFoundException e) {
             e.printStackTrace();
