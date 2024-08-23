@@ -95,15 +95,13 @@ public class InvoiceController {
             @ModelAttribute InvoiceCreationModel invoiceModel,
             RedirectAttributes attributes
     ) {
-        Invoice invoice = new Invoice(
-                invoiceModel.getId(),
-                invoiceModel.getName(),
-                invoiceModel.getLocation(),
-                invoiceModel.getAmount(),""
-        );
+        Invoice invoice = service.getInvoiceById(invoiceModel.getId());
+        invoice.setName(invoiceModel.getName());
+        invoice.setLocation(invoiceModel.getLocation());
+        invoice.setAmount( invoiceModel.getAmount());
+
         if(invoiceModel.getFile() != null){
-            String fileName = service.getInvoiceById(invoice.getId()).getFileName();
-            storageService.deleteFile(fileName);
+            storageService.deleteFile(invoice.getFileName());
             invoice.setFileName(storageService.saveFile(invoiceModel.getFile()));
         }
         service.updateInvoice(invoice);
