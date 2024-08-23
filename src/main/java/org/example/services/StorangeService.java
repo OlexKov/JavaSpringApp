@@ -65,7 +65,7 @@ public class StorangeService implements ISorangeService {
                 Files.deleteIfExists(filePath);
             }
             catch (IOException e) {
-                throw new StorageException("File not exist", e);
+
             }
         }
         else throw new StorageException("File name not be empty");

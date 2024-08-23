@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/invoice")
@@ -100,7 +101,7 @@ public class InvoiceController {
         invoice.setLocation(invoiceModel.getLocation());
         invoice.setAmount( invoiceModel.getAmount());
 
-        if(invoiceModel.getFile() != null){
+        if(!invoiceModel.getFile().isEmpty() ){
             storageService.deleteFile(invoice.getFileName());
             invoice.setFileName(storageService.saveFile(invoiceModel.getFile()));
         }
