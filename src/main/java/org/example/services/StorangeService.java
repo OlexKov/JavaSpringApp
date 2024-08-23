@@ -6,8 +6,7 @@ import org.example.interfaces.ISorangeService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,8 +42,7 @@ public class StorangeService implements ISorangeService {
             Path destinationFile = this.filesDirPath.resolve(fileName)
                     .normalize().toAbsolutePath();
             if (!destinationFile.getParent().equals(this.filesDirPath.toAbsolutePath())) {
-                // This is a security check
-                throw new StorageException(
+                  throw new StorageException(
                         "Cannot store file outside current directory.");
             }
             try (InputStream inputStream = file.getInputStream()) {
@@ -71,5 +69,10 @@ public class StorangeService implements ISorangeService {
             }
         }
         else throw new StorageException("File name not be empty");
+    }
+
+    @Override
+    public File getFile(String fileName) throws IOException {
+         return    new File(filesDir + fileName);
     }
 }

@@ -1,16 +1,25 @@
 package org.example.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.example.entities.Invoice;
 import org.example.exceptions.InvoiceNotFoundException;
 import org.example.interfaces.IInvoiceService;
 import org.example.interfaces.ISorangeService;
 import org.example.models.InvoiceCreationModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Controller
@@ -118,5 +127,20 @@ public class InvoiceController {
             attributes.addAttribute("message", e.getMessage());
         }
         return "redirect:getAllInvoices";
+    }
+
+    @RequestMapping(value = "/files")
+    @ResponseBody
+    public ResponseEntity<Resource> getFile(@RequestParam String fileName) throws IOException {
+        FileSystemResource fileResource = new FileSystemResource(storageService.getFile(fileName));
+        if (!fileResource.exists()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName );
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(fileResource);
     }
 }
