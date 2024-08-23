@@ -73,6 +73,6 @@ public class StorangeService implements ISorangeService {
 
     @Override
     public File getFile(String fileName) throws IOException {
-         return    new File(filesDir + fileName);
+         return    new File(filesDir + "/" + fileName);
     }
 }

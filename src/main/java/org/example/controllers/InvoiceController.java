@@ -129,13 +129,13 @@ public class InvoiceController {
 
     @RequestMapping(value = "/files")
     @ResponseBody
-    public ResponseEntity<Resource> getFile(@RequestParam String fileName) throws IOException {
-        FileSystemResource fileResource = new FileSystemResource(storageService.getFile(fileName));
+    public ResponseEntity<Resource> getFile(@RequestParam String file) throws IOException {
+        FileSystemResource fileResource = new FileSystemResource(storageService.getFile(file));
         if (!fileResource.exists()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName );
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file );
 
         return ResponseEntity.ok()
                 .headers(headers)
