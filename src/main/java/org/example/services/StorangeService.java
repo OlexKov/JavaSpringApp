@@ -16,7 +16,7 @@ import java.util.Objects;
 @Service
 public class StorangeService implements ISorangeService {
     private final Path filesDirPath;
-    private final String filesDir = "target/files";
+    private final String filesDir = "files";
     public  StorangeService() throws IOException {
         filesDirPath = Paths.get(filesDir);
         if(!Files.exists(filesDirPath)){
