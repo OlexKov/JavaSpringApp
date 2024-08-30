@@ -17,6 +17,8 @@ FROM openjdk:17-jdk-slim
 # Set the working directory
 WORKDIR /app
 
+# Expose port 8080
+EXPOSE 8090
 # Copy the built jar file from the Maven build stage
 COPY --from=build /app/target/JavaSpringApp.jar ./app.jar
 
